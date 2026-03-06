@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy Love</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:radial-gradient(circle,#0b0f2a,#000);
+color:white;
+text-align:center;
+overflow-x:hidden;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px 20px;
+}
+
+.gallery{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+justify-content:center;
+}
+
+.gallery img{
+width:220px;
+border-radius:12px;
+transition:.4s;
+}
+
+.gallery img:hover{
+transform:scale(1.1);
+}
+
+.heart{
+position:fixed;
+bottom:-20px;
+font-size:22px;
+animation:floatUp linear forwards;
+}
+
+@keyframes floatUp{
+to{
+transform:translateY(-110vh);
+opacity:0;
+}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+
+<h1>🌌 Our Universe 🌌</h1>
+
+<div id="messages"></div>
+
+<div class="gallery" id="gallery"></div>
+
+<button onclick="toggleMusic()">🎵 Music</button>
+
+</div>
+
+<audio id="music" loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8d2b6d9a5.mp3">
+</audio>
+
+<script>
+
+const params=new URLSearchParams(window.location.search)
+
+const msgs=(params.get("msgs")||"").split("|")
+const imgs=(params.get("imgs")||"").split("||")
+
+const msgBox=document.getElementById("messages")
+
+msgs.forEach(m=>{
+if(!m)return
+const p=document.createElement("p")
+p.innerText=decodeURIComponent(m)
+msgBox.appendChild(p)
+})
+
+const gallery=document.getElementById("gallery")
+
+imgs.forEach(src=>{
+if(!src)return
+const img=document.createElement("img")
+img.src=decodeURIComponent(src)
+gallery.appendChild(img)
+})
+
+const music=document.getElementById("music")
+
+function toggleMusic(){
+if(music.paused) music.play()
+else music.pause()
+}
+
+setInterval(()=>{
+const heart=document.createElement("div")
+heart.className="heart"
+heart.innerText="💗"
+heart.style.left=Math.random()*100+"vw"
+heart.style.animationDuration=(4+Math.random()*4)+"s"
+document.body.appendChild(heart)
+setTimeout(()=>heart.remove(),8000)
+},400)
+
+const canvas=document.getElementById("stars")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let stars=[]
+
+for(let i=0;i<200;i++){
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*1.5
+})
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="white"
+
+stars.forEach(s=>{
+ctx.beginPath()
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2)
+ctx.fill()
+})
+
+requestAnimationFrame(draw)
+}
+
+draw()
+
+</script>
+
+</body>
+</html>
